@@ -4,17 +4,24 @@ import asyncio
 
 import websockets
 
-
-#async def handler(websocket):
-	#while True:
-    	#    try:
-      # 	message = await websocket.recv()
-        #except websockets.ConnectionClosedOK:
-        #	break
-        #print(message)
+# simple connection between server and localhost
+# async def handler(websocket):
+#     while True:
+#         message = await websocket.recv()
+#         print(message)
 
 
+# To remove the exception part
+# async def handler(websocket):
+#     while True:
+#         try:
+#             message = await websocket.recv()
+#         except websockets.ConnectionClosedOK:
+#             break
+#         print(message)
 
+
+#  Works same as above but in smaller line of codes
 async def handler(websocket):
     async for message in websocket:
         print(message)
