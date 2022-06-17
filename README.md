@@ -1,2 +1,2 @@
 # Websocket-Programming
-This repository contains a detailed study of the documentation of Websockets in python.
+This repository contains a detailed study of the documentation of Websocket in python.
