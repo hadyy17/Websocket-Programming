@@ -1,29 +1,62 @@
-#!/usr/bin/env python
+__all__ = ["PLAYER1", "PLAYER2", "Connect4"]
 
-import asyncio
-
-import websockets
+PLAYER1, PLAYER2 = "red", "yellow"
 
 
-#async def handler(websocket):
-	#while True:
-    	#    try:
-      # 	message = await websocket.recv()
-        #except websockets.ConnectionClosedOK:
-        #	break
-        #print(message)
+class Connect4:
+    """
+    A Connect Four game.
 
+    Play moves with :meth:`play`.
 
+    Get past moves with :attr:`moves`.
 
-async def handler(websocket):
-    async for message in websocket:
-        print(message)
+    Check for a victory with :attr:`winner`.
 
+    """
 
-async def main():
-    async with websockets.serve(handler, "", 8001):
-        await asyncio.Future()  # run forever
+    def __init__(self):
+        self.moves = []
+        self.top = [0 for _ in range(7)]
+        self.winner = None
 
+    @property
+    def last_player(self):
+        """
+        Player who played the last move.
 
-if __name__ == "__main__":
-    asyncio.run(main())
+        """
+        return PLAYER1 if len(self.moves) % 2 else PLAYER2
+
+    @property
+    def last_player_won(self):
+        """
+        Whether the last move is winning.
+
+        """
+        b = sum(1 << (8 * column + row) for _, column, row in self.moves[::-2])
+        return any(b & b >> v & b >> 2 * v & b >> 3 * v for v in [1, 7, 8, 9])
+
+    def play(self, player, column):
+        """
+        Play a move in a column.
+
+        Returns the row where the checker lands.
+
+        Raises :exc:`RuntimeError` if the move is illegal.
+
+        """
+        if player == self.last_player:
+            raise RuntimeError("It isn't your turn.")
+
+        row = self.top[column]
+        if row == 6:
+            raise RuntimeError("This slot is full.")
+
+        self.moves.append((player, column, row))
+        self.top[column] += 1
+
+        if self.winner is None and self.last_player_won:
+            self.winner = self.last_player
+
+        return row
